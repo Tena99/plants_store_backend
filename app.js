@@ -1,6 +1,7 @@
 require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
+const routes = require("./routes");
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -8,13 +9,12 @@ const port = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
-app.get("/", (request, response) => {
-  response.send("Welcome!");
-});
+app.use("/", routes);
 
 app.get("*", (request, response) => {
-  response.status(404).json({ message: "route not defined" });
+  response
+    .status(404)
+    .json({ message: "The route does not exist. Please try another one." });
 });
 
 const server = app.listen(port, () =>
