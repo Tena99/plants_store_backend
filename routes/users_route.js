@@ -20,4 +20,14 @@ route.get("/:userId", async (request, response) => {
   response.json(result);
 });
 
+route.get("/:userId/cart", async (request, response) => {
+  await connect();
+
+  const { userId } = request.params;
+  const result = await User.findOne({ _id: userId }).populate("cart.product");
+  console.log(result.cart);
+
+  response.json(result.cart);
+});
+
 module.exports = route;
