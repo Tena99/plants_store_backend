@@ -25,9 +25,47 @@ route.get("/:userId/cart", async (request, response) => {
 
   const { userId } = request.params;
   const result = await User.findOne({ _id: userId }).populate("cart.product");
-  console.log(result.cart);
 
   response.json(result.cart);
+});
+
+route.post("/:userId/cart", async (request, response) => {
+  await connect();
+
+  const { userId } = request.params;
+  const { productId } = request.body;
+
+  try {
+    const user = await User.findById(userId);
+    const updatedProduct = await Product.findByIdAndUpdate(
+      productId,
+      { $inc: { inStock: -1 } },
+      { new: true }
+    );
+
+    if (!user) {
+      return response.status(404).json({ error: "User not found" });
+    }
+
+    // Check if the product already exists in the user's cart
+    const existingProduct = user.cart.find(
+      (item) => item.product.toString() === productId
+    );
+
+    if (existingProduct) {
+      // If the product already exists, increment its amount
+      existingProduct.amount += 1;
+    } else {
+      // If the product doesn't exist, add it to the cart
+      user.cart.push({ product: productId, amount: 1 });
+    }
+    await user.save();
+
+    response.json(user);
+  } catch (error) {
+    console.error("Error adding item to cart:", error);
+    response.status(500).json({ error: "Internal server error" });
+  }
 });
 
 module.exports = route;
