@@ -68,4 +68,33 @@ route.post("/:userId/cart", async (request, response) => {
   }
 });
 
+route.delete("/:userId/cart/:productId", async (request, response) => {
+  try {
+    await connect();
+
+    const { userId, productId } = request.params;
+
+    if (!userId || !productId) {
+      return response
+        .status(400)
+        .json({ error: "User ID or Product ID is missing" });
+    }
+
+    const user = await User.findOneAndUpdate(
+      { _id: userId },
+      { $pull: { cart: { product: productId } } },
+      { new: true }
+    );
+
+    if (!user) {
+      return response.status(404).json({ error: "User not found" });
+    }
+
+    response.json(user);
+  } catch (error) {
+    console.error(error);
+    response.status(500).json({ error: "Internal server error" });
+  }
+});
+
 module.exports = route;
