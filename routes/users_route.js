@@ -68,6 +68,29 @@ route.post("/:userId/cart", async (request, response) => {
   }
 });
 
+route.patch("/:userId/cart", async (request, response) => {
+  await connect();
+
+  const { userId } = request.params;
+  const { productId, amount } = request.body;
+
+  try {
+    console.log("Received userId:", userId);
+
+    const user = await User.findByIdAndUpdate(
+      userId,
+      { $set: { "cart.$[item].amount": amount } },
+      { new: true, arrayFilters: [{ "item.product": productId }] }
+    );
+
+    console.log("Updated user:", user);
+
+    response.json(user);
+  } catch (error) {
+    response.json(error);
+  }
+});
+
 route.delete("/:userId/cart/:productId", async (request, response) => {
   try {
     await connect();
