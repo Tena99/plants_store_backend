@@ -33,13 +33,13 @@ route.post("/:userId/cart", async (request, response) => {
   await connect();
 
   const { userId } = request.params;
-  const { productId } = request.body;
+  const { productId, amount } = request.body;
 
   try {
     const user = await User.findById(userId);
     const updatedProduct = await Product.findByIdAndUpdate(
       productId,
-      { $inc: { inStock: -1 } },
+      { $inc: { inStock: -amount } },
       { new: true }
     );
 
@@ -54,10 +54,10 @@ route.post("/:userId/cart", async (request, response) => {
 
     if (existingProduct) {
       // If the product already exists, increment its amount
-      existingProduct.amount += 1;
+      existingProduct.amount += amount;
     } else {
       // If the product doesn't exist, add it to the cart
-      user.cart.push({ product: productId, amount: 1 });
+      user.cart.push({ product: productId, amount });
     }
     await user.save();
 
