@@ -10,8 +10,15 @@ route.get("/", async (request, response) => {
   response.json({ result });
 });
 
-route.get("/:productId", async (request, response) => {
+route.get("/special", async (request, response) => {
   await connect();
+
+  const result = await Product.find({ featured: true });
+  response.json({ result });
+});
+
+route.get("/:productId", async (request, response) => {
+  await connect(); 
 
   const { productId } = request.params;
   const result = await Product.findOne({ _id: productId });
