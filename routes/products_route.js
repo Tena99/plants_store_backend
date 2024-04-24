@@ -20,11 +20,9 @@ route.get("/special", async (request, response) => {
 route.post("/category", async (request, response) => {
   await connect();
 
-  let { category } = request.body;
-  console.log(category);
+  let { category, lang } = request.body;
 
-  const result = await Product.find({ category });
-  console.log(result);
+  const result = await Product.find({ [`${lang}.category`]: category });
 
   response.json({ result });
 });
