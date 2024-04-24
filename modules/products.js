@@ -14,6 +14,10 @@ const productSchema = new Schema({
       type: String,
       required: true,
     },
+    category: {
+      type: String,
+      required: true,
+    },
   },
   de: {
     name: {
@@ -21,6 +25,10 @@ const productSchema = new Schema({
       required: true,
     },
     description: {
+      type: String,
+      required: true,
+    },
+    category: {
       type: String,
       required: true,
     },
@@ -47,11 +55,6 @@ const productSchema = new Schema({
   },
   inStock: {
     type: Number,
-    required: true,
-  },
-  category: {
-    type: Schema.Types.ObjectId,
-    ref: "Category",
     required: true,
   },
 });
