@@ -22,9 +22,13 @@ route.post("/category", async (request, response) => {
 
   let { category, lang } = request.body;
 
-  const result = await Product.find({ [`${lang}.category`]: category });
-
-  response.json({ result });
+  if (category === "All") {
+    const result = await Product.find({ featured: false });
+    response.json({ result });
+  } else {
+    const result = await Product.find({ [`${lang}.category`]: category });
+    response.json({ result });
+  }
 });
 
 route.get("/:productId", async (request, response) => {
