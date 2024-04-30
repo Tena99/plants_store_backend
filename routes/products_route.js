@@ -22,7 +22,7 @@ route.post("/category", async (request, response) => {
 
   let { category, lang } = request.body;
 
-  if (category === "All") {
+  if (category === "All" || category === "Alle") {
     const result = await Product.find({ featured: false });
     response.json({ result });
   } else {
